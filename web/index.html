@@ -29,7 +29,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>movie_app</title>
+  <title>MovieDS</title>
   <link rel="manifest" href="manifest.json">
 
   <script>
@@ -38,10 +38,30 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <style>
+    /* Add CSS to handle full-screen mode */
+    video:-webkit-full-screen {
+      width: 100%;
+      height: 100%;
+    }
+    video:-moz-full-screen {
+      width: 100%;
+      height: 100%;
+    }
+    video:-ms-fullscreen {
+      width: 100%;
+      height: 100%;
+    }
+    video:fullscreen {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+
 </head>
 <body>
   <script>
-    window.addEventListener('load', function(ev) {
+     window.addEventListener('load', function(ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
@@ -49,6 +69,17 @@
         },
         onEntrypointLoaded: function(engineInitializer) {
           engineInitializer.initializeEngine().then(function(appRunner) {
+            // Listen for fullscreen change event
+            document.addEventListener('fullscreenchange', (event) => {
+              if (document.fullscreenElement) {
+                // Video is in fullscreen mode
+                document.querySelector('video').style.objectFit = 'contain'; // or 'cover' as per your requirement
+              } else {
+                // Video exited fullscreen mode
+                document.querySelector('video').style.objectFit = 'fill'; // or any other default style
+              }
+            });
+            
             appRunner.runApp();
           });
         }

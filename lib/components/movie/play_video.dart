@@ -96,7 +96,7 @@ class MovieList extends StatelessWidget {
         },
         child: Container(
           width: MediaQuery.of(context).size.width < 684
-              ? 102
+              ? 104
               : MediaQuery.of(context).size.width < 714
                   ? 210
                   : MediaQuery.of(context).size.width < 799
@@ -107,7 +107,7 @@ class MovieList extends StatelessWidget {
               CachedNetworkImage(
                 imageUrl: data['posterUrl'] ?? '',
                 width: MediaQuery.of(context).size.width < 684
-                    ? 102
+                    ? 104
                     : MediaQuery.of(context).size.width < 714
                         ? 210
                         : MediaQuery.of(context).size.width < 799

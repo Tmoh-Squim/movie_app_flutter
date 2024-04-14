@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class PlayVideoScreen extends StatefulWidget {
   final Map<String, dynamic> movie;
@@ -97,7 +98,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.movie['name'] ?? '')),
+      appBar: kIsWeb ? null : AppBar(title: Text(widget.movie['name'] ?? '')),
       backgroundColor: Color(0xFF0000004b),
       body: Stack(
         children: [

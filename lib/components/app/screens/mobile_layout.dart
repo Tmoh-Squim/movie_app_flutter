@@ -134,9 +134,7 @@ class _MobileLayoutState extends State<MobileLayout> {
           SizedBox(
             height: 10,
           ),
-          Container(
-            child: TrendingMovies(),
-          )
+          TrendingMovies(),
         ],
       ),
     );

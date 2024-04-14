@@ -76,7 +76,7 @@ class MovieList extends StatelessWidget {
             children: [
               for (var movie in movies ?? [])
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(0),
                   child:
                       _buildMovieTile(context, movie.data(), movie['isSeries']),
                 ),
@@ -96,7 +96,7 @@ class MovieList extends StatelessWidget {
         },
         child: Container(
           width: MediaQuery.of(context).size.width < 684
-              ? 102
+              ? 101
               : MediaQuery.of(context).size.width < 714
                   ? 210
                   : MediaQuery.of(context).size.width < 799
@@ -107,7 +107,7 @@ class MovieList extends StatelessWidget {
               CachedNetworkImage(
                 imageUrl: data['posterUrl'] ?? '',
                 width: MediaQuery.of(context).size.width < 684
-                    ? 102
+                    ? 101
                     : MediaQuery.of(context).size.width < 714
                         ? 210
                         : MediaQuery.of(context).size.width < 799

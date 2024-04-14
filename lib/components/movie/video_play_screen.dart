@@ -53,8 +53,9 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
       autoInitialize: true,
       allowFullScreen: true,
       showControls: true,
-      placeholder: _isVideoLoading ? _buildPlaceholder() : null, // Use null when video is initialized
-      aspectRatio: 16 / 9,
+      placeholder: _isVideoLoading
+          ? _buildPlaceholder()
+          : null, // Use null when video is initialized
     );
 
     // Listen for when the video is initialized

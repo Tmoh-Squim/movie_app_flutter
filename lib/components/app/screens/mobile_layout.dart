@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/components/app/screens/search_screen.dart';
+import 'package:movie_app/components/app/screens/trending_movies.dart';
 import 'package:movie_app/components/movie/play_video.dart';
 import 'package:movie_app/components/movie/upload_single_movie.dart';
 import 'package:movie_app/components/utils/home_screen_card.dart';
@@ -36,6 +37,7 @@ class _MobileLayoutState extends State<MobileLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF28303D),
       bottomNavigationBar: BottomAppBar(
         height: 70,
         color: Color.fromARGB(136, 0, 0, 0),
@@ -87,7 +89,7 @@ class _MobileLayoutState extends State<MobileLayout> {
           Stack(
             children: [
               Container(
-                height: 250,
+                height: 190,
                 child: PageView(
                   controller: _pageController,
                   scrollDirection: Axis.horizontal,
@@ -129,6 +131,10 @@ class _MobileLayoutState extends State<MobileLayout> {
               ),
             ],
           ),
+          SizedBox(
+            height: 10,
+          ),
+          TrendingMovies()
         ],
       ),
     );

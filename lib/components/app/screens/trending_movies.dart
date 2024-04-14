@@ -16,11 +16,12 @@ class TrendingMovies extends StatelessWidget {
               Text("Trending Now",
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 23,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600)),
               Icon(
                 Icons.arrow_forward_ios,
                 color: Colors.white,
+                size: 17,
               )
             ],
           )

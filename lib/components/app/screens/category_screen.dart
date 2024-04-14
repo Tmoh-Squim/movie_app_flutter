@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/components/app/screens/home_screen.dart';
 import 'package:movie_app/components/utils/categories.dart';
 
 class CategoryScreen extends StatelessWidget {
@@ -165,7 +166,8 @@ class CategoryScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, "/");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
                 },
                 child: Container(
                   alignment: Alignment.center,

@@ -149,8 +149,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ),
                         title: Text(
-                          movieData['name'].length > 30
-                              ? movieData['name'].substring(0, 30) + '...'
+                          movieData['name'].length > 20
+                              ? movieData['name'].substring(0, 20) + '...'
                               : movieData['name'] ?? '',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -212,8 +212,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
                     title: Text(
-                      movieData['name'].length > 30
-                          ? movieData['name'].substring(0, 30) + '...'
+                      movieData['name'].length > 20
+                          ? movieData['name'].substring(0, 20) + '...'
                           : movieData['name'] ?? '',
                       style: TextStyle(color: Colors.white),
                     ),

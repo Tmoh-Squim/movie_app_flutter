@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class TrendingMovies extends StatelessWidget {
-  const TrendingMovies({Key? key}) : super(key: key);
+class ContinueWatchingScreen extends StatelessWidget {
+  const ContinueWatchingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class TrendingMovies extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Trending Now",
+                Text("Continue Watching",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 23,

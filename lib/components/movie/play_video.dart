@@ -76,7 +76,7 @@ class MovieList extends StatelessWidget {
             children: [
               for (var movie in movies ?? [])
                 Padding(
-                  padding: EdgeInsets.all(2.3),
+                  padding: EdgeInsets.all(1),
                   child:
                       _buildMovieTile(context, movie.data(), movie['isSeries']),
                 ),

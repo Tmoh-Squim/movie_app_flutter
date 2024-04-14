@@ -4,6 +4,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+class ConditionalAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+
+  ConditionalAppBar({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return kIsWeb
+        ? PreferredSize(
+            preferredSize: Size.fromHeight(0),
+            child: SizedBox.shrink(),
+          )
+        : AppBar(title: Text(title));
+  }
+
+  @override
+  Size get preferredSize =>
+      kIsWeb ? Size.fromHeight(0) : AppBar().preferredSize;
+}
+
 class PlayVideoScreen extends StatefulWidget {
   final Map<String, dynamic> movie;
 
@@ -98,7 +118,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: kIsWeb ? null : AppBar(title: Text(widget.movie['name'] ?? '')),
+      appBar: ConditionalAppBar(title: widget.movie['name'] ?? ''),
       backgroundColor: Color(0xFF0000004b),
       body: Stack(
         children: [

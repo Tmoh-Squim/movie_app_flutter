@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/components/app/screens/continue_playing_screen.dart';
 import 'package:movie_app/components/app/screens/search_screen.dart';
 import 'package:movie_app/components/app/screens/trending_movies.dart';
+import 'package:movie_app/components/movie/create_movie.dart';
 import 'package:movie_app/components/movie/play_video.dart';
 import 'package:movie_app/components/movie/upload_single_movie.dart';
 import 'package:movie_app/components/utils/home_screen_card.dart';
@@ -38,6 +39,12 @@ class _MobileLayoutState extends State<MobileLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(8),
+            child: AppBar(
+              backgroundColor: Colors.blue,
+              automaticallyImplyLeading: false,
+            )),
         backgroundColor: Color(0xFF28303D),
         bottomNavigationBar: BottomAppBar(
           height: 70,
@@ -72,7 +79,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MovieUploadScreen()));
+                          builder: (context) => UploadDataScreen()));
                 },
                 icon: Icon(Icons.play_arrow_rounded, size: 35),
               ),
@@ -147,6 +154,16 @@ class _MobileLayoutState extends State<MobileLayout> {
                 height: 190,
                 child: TrendingMovies(),
               ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                "All movies",
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+              Container(
+                child: MovieList(),
+              )
             ],
           ),
         ));

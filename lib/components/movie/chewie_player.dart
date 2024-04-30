@@ -24,16 +24,16 @@ class ConditionalAppBar extends StatelessWidget implements PreferredSizeWidget {
       kIsWeb ? Size.fromHeight(0) : AppBar().preferredSize;
 }
 
-class PlayVideoScreen extends StatefulWidget {
+class ChewiePlayer extends StatefulWidget {
   final Map<String, dynamic> movie;
 
-  PlayVideoScreen({required this.movie});
+  ChewiePlayer({required this.movie});
 
   @override
   _PlayVideoScreenState createState() => _PlayVideoScreenState();
 }
 
-class _PlayVideoScreenState extends State<PlayVideoScreen> {
+class _PlayVideoScreenState extends State<ChewiePlayer> {
   ChewieController? _chewieController;
   late SharedPreferences _prefs;
   late String _videoId;
@@ -73,10 +73,6 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
       looping: false,
       autoInitialize: true,
       allowFullScreen: true,
-      aspectRatio: kIsWeb
-          ? MediaQuery.of(context).size.width /
-              MediaQuery.of(context).size.height
-          : 16 / 9,
       showControls: true,
       placeholder: _isVideoLoading
           ? _buildPlaceholder()
@@ -122,6 +118,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: ConditionalAppBar(title: widget.movie['name'] ?? ''),
       backgroundColor: Color(0xFF0000004b),
       body: Stack(
         children: [

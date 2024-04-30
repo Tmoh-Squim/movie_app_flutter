@@ -7,31 +7,28 @@ import 'package:cached_network_image/cached_network_image.dart';
 class MovieList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Movies")),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('series').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return _buildShimmerLoading(context);
-          }
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('series').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _buildShimmerLoading(context);
+        }
 
-          final movies = snapshot.data?.docs;
+        final movies = snapshot.data?.docs;
 
-          return FutureBuilder(
-            future: Future.delayed(Duration(seconds: 2)),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return _buildShimmerLoading(context);
-              } else {
-                return MediaQuery.of(context).size.width > 935
-                    ? _buildGridView(context, movies, crossAxisCount: 6)
-                    : _buildGridView(context, movies, crossAxisCount: 3);
-              }
-            },
-          );
-        },
-      ),
+        return FutureBuilder(
+          future: Future.delayed(Duration(seconds: 2)),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildShimmerLoading(context);
+            } else {
+              return MediaQuery.of(context).size.width > 935
+                  ? _buildGridView(context, movies, crossAxisCount: 6)
+                  : _buildGridView(context, movies, crossAxisCount: 3);
+            }
+          },
+        );
+      },
     );
   }
 
@@ -64,15 +61,12 @@ class MovieList extends StatelessWidget {
     return ScrollConfiguration(
       behavior: ScrollBehavior(),
       child: SingleChildScrollView(
-          child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width > 613 ? 20 : 1),
-        child: Container(
-          width: MediaQuery.of(context)
-              .size
-              .width, // Set container width to screen width
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width > 613 ? 20 : 0),
           child: Wrap(
             alignment: WrapAlignment.spaceBetween,
+            spacing: 2.0, // Add spacing between movies
             children: [
               for (var movie in movies ?? [])
                 Padding(
@@ -83,57 +77,67 @@ class MovieList extends StatelessWidget {
             ],
           ),
         ),
-      )),
+      ),
     );
   }
 
   Widget _buildMovieTile(
       BuildContext context, Map<String, dynamic> data, bool isSeries) {
-    return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      GestureDetector(
-        onTap: () {
-          _navigateToMovieDetail(context, data, isSeries);
-        },
-        child: Container(
-          width: MediaQuery.of(context).size.width < 684
-              ? 103
-              : MediaQuery.of(context).size.width < 714
-                  ? 210
-                  : MediaQuery.of(context).size.width < 799
-                      ? 220
-                      : 250,
-          child: Column(
-            children: [
-              CachedNetworkImage(
-                imageUrl: data['posterUrl'] ?? '',
-                width: MediaQuery.of(context).size.width < 684
-                    ? 103
-                    : MediaQuery.of(context).size.width < 714
-                        ? 210
-                        : MediaQuery.of(context).size.width < 799
-                            ? 220
-                            : 250,
-                height: MediaQuery.of(context).size.width < 614 ? 130 : 170,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(),
+    return GestureDetector(
+      onTap: () {
+        _navigateToMovieDetail(context, data, isSeries);
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width < 684
+            ? 103
+            : MediaQuery.of(context).size.width < 714
+                ? 210
+                : MediaQuery.of(context).size.width < 799
+                    ? 220
+                    : 250,
+        child: Column(
+          children: [
+            CachedNetworkImage(
+              imageUrl: data['posterUrl'] ?? '',
+              width: MediaQuery.of(context).size.width < 684
+                  ? 103
+                  : MediaQuery.of(context).size.width < 714
+                      ? 210
+                      : MediaQuery.of(context).size.width < 799
+                          ? 220
+                          : 250,
+              height: MediaQuery.of(context).size.width < 614 ? 130 : 170,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: Colors.grey[500]!,
+                highlightColor: Colors.grey[300]!,
+                child: Container(
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width < 684
+                      ? 103
+                      : MediaQuery.of(context).size.width < 714
+                          ? 210
+                          : MediaQuery.of(context).size.width < 799
+                              ? 220
+                              : 250,
+                  height: MediaQuery.of(context).size.width < 614 ? 130 : 170,
                 ),
               ),
-              SizedBox(height: 2.0),
-              Container(
-                child: Text(
-                  data['name'].length > 12
-                      ? data['name'].substring(0, 12) + '...'
-                      : data['name'] ?? '',
-                  style: TextStyle(fontSize: 14.0),
-                  textAlign: TextAlign.start,
-                ),
+            ),
+            SizedBox(height: 2.0),
+            Container(
+              child: Text(
+                data['name'].length > 12
+                    ? data['name'].substring(0, 12) + '...'
+                    : data['name'] ?? '',
+                style: TextStyle(fontSize: 14.0, color: Colors.white),
+                textAlign: TextAlign.start,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    ]);
+    );
   }
 
   void _navigateToMovieDetail(

@@ -70,10 +70,18 @@ class _UploadDataScreenState extends State<UploadDataScreen> {
                 child: Text('Select Poster Image'),
               ),
               posterImageUrl.isNotEmpty
-                  ? Image.network(
-                      posterImageUrl,
-                      width: 100,
-                      height: 100,
+                  ? Column(
+                      children: [
+                        Image.network(
+                          posterImageUrl,
+                          width: 100,
+                          height: 100,
+                        ),
+                        Text(
+                          'Poster uploaded',
+                          style: TextStyle(color: Colors.green),
+                        ),
+                      ],
                     )
                   : SizedBox(),
               TextField(
@@ -148,17 +156,18 @@ class _UploadDataScreenState extends State<UploadDataScreen> {
               TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
               String videoUrl = await snapshot.ref.getDownloadURL();
               setState(() {
-                episode['video'] = videoUrl;
+                episode['videoUrl'] = videoUrl;
               });
             }
           },
           child: Text('Upload Video'),
         ),
         SizedBox(height: 10),
-        Text(
-          episode.containsKey('video') ? 'Video uploaded' : '',
-          style: TextStyle(color: Colors.green),
-        ),
+        if (episode.containsKey('video')) // Only show when video is uploaded
+          Text(
+            'Video uploaded',
+            style: TextStyle(color: Colors.green),
+          ),
         SizedBox(height: 20),
       ],
     );

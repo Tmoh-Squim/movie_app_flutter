@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:movie_app/components/app/screens/home_screen.dart';
 import 'package:movie_app/components/movie/fetch_movies.dart';
+import 'package:movie_app/components/movie/play_video.dart';
+import 'package:movie_app/components/movie/upload_single_movie.dart';
 import 'package:movie_app/components/movie/video_play_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -27,6 +30,45 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF28303D),
+      bottomNavigationBar: BottomAppBar(
+        height: 70,
+        color: Color.fromARGB(136, 0, 0, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+              icon: Icon(
+                Icons.home,
+                size: 35,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.search, size: 35),
+              color: Colors.purple,
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MovieUploadScreen()));
+              },
+              icon: Icon(Icons.play_arrow_rounded, size: 35),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+              icon: Icon(Icons.person_2_rounded, size: 35),
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:movie_app/components/app/screens/search_screen.dart';
 import 'package:movie_app/components/movie/video_play_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,27 +8,19 @@ import 'package:cached_network_image/cached_network_image.dart';
 class MovieList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('series').snapshots(),
+    return FutureBuilder<QuerySnapshot>(
+      future: MovieService.getMovies(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildShimmerLoading(context);
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          final movies = snapshot.data?.docs;
+          return MediaQuery.of(context).size.width > 935
+              ? _buildGridView(context, movies, crossAxisCount: 6)
+              : _buildGridView(context, movies, crossAxisCount: 3);
         }
-
-        final movies = snapshot.data?.docs;
-
-        return FutureBuilder(
-          future: Future.delayed(Duration(seconds: 2)),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildShimmerLoading(context);
-            } else {
-              return MediaQuery.of(context).size.width > 935
-                  ? _buildGridView(context, movies, crossAxisCount: 6)
-                  : _buildGridView(context, movies, crossAxisCount: 3);
-            }
-          },
-        );
       },
     );
   }

@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:movie_app/components/app/screens/home_screen.dart';
-import 'package:movie_app/components/movie/fetch_movies.dart';
-import 'package:movie_app/components/movie/play_video.dart';
 import 'package:movie_app/components/movie/upload_single_movie.dart';
 import 'package:movie_app/components/movie/video_play_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+class MovieService {
+  static Future<QuerySnapshot> getMovies() async {
+    try {
+      return await FirebaseFirestore.instance.collection('series').get();
+    } catch (error) {
+      print('Error fetching movies: $error');
+      throw error; // Throw the error if there's an error
+    }
+  }
+}
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -17,13 +26,13 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _queryController = TextEditingController();
-  late Stream<QuerySnapshot> _moviesStream;
+  late Future<QuerySnapshot> _moviesFuture;
   bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
-    _moviesStream = MovieService.getMovies();
+    _moviesFuture = MovieService.getMovies();
   }
 
   @override
@@ -151,65 +160,53 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildOriginalWidget() {
-    return FutureBuilder(
-      future: Future.delayed(Duration(seconds: 2)),
+    return FutureBuilder<QuerySnapshot>(
+      future: _moviesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildShimmerLoading();
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          return StreamBuilder<QuerySnapshot>(
-            stream: _moviesStream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container(); // Return an empty container while waiting for data
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                final movies = snapshot.data!.docs;
-                return ListView.builder(
-                  itemCount: movies.length,
-                  itemBuilder: (context, index) {
-                    final movieData =
-                        movies[index].data() as Map<String, dynamic>;
-                    final posterUrl = movieData['posterUrl'] ?? '';
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: CachedNetworkImage(
-                            imageUrl: posterUrl ?? '',
-                            width: MediaQuery.of(context).size.width < 614
-                                ? 130
-                                : 200,
-                            height: 130.0,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Center(
-                              child:
-                                  CircularProgressIndicator(), // Placeholder indicator
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          movieData['name'].length > 20
-                              ? movieData['name'].substring(0, 20) + '...'
-                              : movieData['name'] ?? '',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  PlayVideoScreen(movie: movieData),
-                            ),
-                          );
-                        },
+          final movies = snapshot.data!.docs;
+          return ListView.builder(
+            itemCount: movies.length,
+            itemBuilder: (context, index) {
+              final movieData = movies[index].data() as Map<String, dynamic>;
+              final posterUrl = movieData['posterUrl'] ?? '';
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                child: ListTile(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: CachedNetworkImage(
+                      imageUrl: posterUrl ?? '',
+                      width:
+                          MediaQuery.of(context).size.width < 614 ? 130 : 200,
+                      height: 130.0,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(
+                        child:
+                            CircularProgressIndicator(), // Placeholder indicator
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    movieData['name'].length > 20
+                        ? movieData['name'].substring(0, 20) + '...'
+                        : movieData['name'] ?? '',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlayVideoScreen(movie: movieData),
                       ),
                     );
                   },
-                );
-              }
+                ),
+              );
             },
           );
         }
@@ -218,64 +215,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSearchOverlay() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _moviesStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildShimmerLoading();
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          final movies = snapshot.data!.docs;
-          final filteredMovies = movies.where((movie) {
-            final movieData = movie.data() as Map<String, dynamic>;
-            final movieName = movieData['name'] as String;
-            final searchText = _queryController.text.toLowerCase();
-            return movieName.toLowerCase().contains(searchText);
-          }).toList();
-          return Container(
-            child: ListView.builder(
-              itemCount: filteredMovies.length,
-              itemBuilder: (context, index) {
-                final movieData =
-                    filteredMovies[index].data() as Map<String, dynamic>;
-                final posterUrl = movieData['posterUrl'] ?? '';
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: CachedNetworkImage(
-                        imageUrl: posterUrl ?? '',
-                        width:
-                            MediaQuery.of(context).size.width < 614 ? 130 : 200,
-                        height: 200.0,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    title: Text(
-                      movieData['name'].length > 20
-                          ? movieData['name'].substring(0, 20) + '...'
-                          : movieData['name'] ?? '',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              PlayVideoScreen(movie: movieData),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          );
-        }
-      },
-    );
+    return Container(); // Your search overlay widget goes here
   }
 
   Widget _buildShimmerLoading() {
@@ -312,17 +252,17 @@ class _SearchScreenState extends State<SearchScreen> {
     if (newText.isNotEmpty) {
       setState(() {
         _isSearching = true;
-        // Update _moviesStream to filter the movies based on the search query
-        _moviesStream = FirebaseFirestore.instance
+        // Update _moviesFuture to filter the movies based on the search query
+        _moviesFuture = FirebaseFirestore.instance
             .collection('series')
             .where('name', isGreaterThanOrEqualTo: newText)
             .where('name', isLessThan: newText + 'z')
-            .snapshots();
+            .get();
       });
     } else {
       setState(() {
         _isSearching = false;
-        _moviesStream = MovieService.getMovies();
+        _moviesFuture = MovieService.getMovies();
       });
     }
   }

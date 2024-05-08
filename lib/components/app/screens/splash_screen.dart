@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/components/app/screens/category_screen.dart';
+import 'package:movie_app/components/app/screens/home_screen.dart';
 import 'package:movie_app/components/utils/splash_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,7 +23,21 @@ class _SplashScreenState extends State<SplashScreen> {
         _currentPage = _pageController.page!.round();
       });
     });
+    _checkLoggedInState();
     super.initState();
+  }
+
+  _checkLoggedInState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(),
+        ),
+      );
+    }
   }
 
   @override
@@ -103,7 +119,10 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool('isLoggedIn', true);
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

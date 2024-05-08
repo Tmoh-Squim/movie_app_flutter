@@ -8,10 +8,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      if (constraints.maxWidth < 935) {
-        return MobileLayout();
-      }
-      return WebLayout();
+      return MobileLayout();
     });
   }
 }
